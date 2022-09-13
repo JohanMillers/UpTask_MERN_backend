@@ -1,11 +1,16 @@
 import express from "express";
+import dotenv from "dotenv";
 import connetarDB from "./config/db.js";
 
 const app = express();
 
+dotenv.config();
+
 connetarDB();
 
-app.listen(4000, () => {
-    console.log("Servidor corriendo en el puesto 4000")
+const PORT = process.env.PORT || 4000;
+
+app.listen(PORT, () => {
+    console.log(`Servidor corriendo en el puesto ${PORT}`)
 });
 
