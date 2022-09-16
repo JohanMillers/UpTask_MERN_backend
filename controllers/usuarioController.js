@@ -31,7 +31,7 @@ const autenticar = async (req, res) => {
     const { email, password } = req.body;
     
     //Comprobar si el usuario existe
-    const usuario = await Usuario.findOne({email})
+    const usuario = await Usuario.findOne({ email })
     if (!usuario) {
         const error = new Error("El Usuario no existe");
         return res.status(404).json({ msg: error.message });
@@ -52,9 +52,36 @@ const autenticar = async (req, res) => {
         });
         
     } else {
-        console.log('Es Incorrecto');
+        const error = new Error("El password es Incorrecto")
+        return res.status(403).json({ msg: error.message });
     }
+
+};
+
+const confirmar = async (req, res) => {
+    const { token } = req.params;
+    const usuarioConfirmar = await Usuario.findOne({ token });
+
+    if (!usuarioConfirmar) {
+        const error = new Error("Token no valido")
+        return res.status(403).json({ msg: error.message }); 
+    }
+    try {
+        
+        usuarioConfirmar.confimado = true;
+        usuarioConfirmar.token = "";
+        usuarioConfirmar.save();
+        res.json({ msg: 'Usuario Confirmado Correctamente' });
+
+        
+    } catch (error) {
+        console.log(error
+        )
+        
+    }
+
+    
 
 }
 
-export {registrar, autenticar}
+export {registrar, autenticar, confirmar}
