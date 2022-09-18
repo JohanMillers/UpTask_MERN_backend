@@ -111,7 +111,7 @@ const comprobarToken = async (req, res) => {
     }
 };
 
-const nuevoPassword = async (req, res) => { 
+const nuevoPassword = async (req, res) => {
     const { token } = req.params;
     const { password } = req.body;
 
@@ -131,8 +131,12 @@ const nuevoPassword = async (req, res) => {
         const error = new Error("El token no valido");
         return res.status(404).json({ msg: error.message });
     }
+};
 
+const perfil = async (req, res) => {
+    const { usuario } = req;
 
+    res.json(usuario);
 
 }
 
@@ -142,5 +146,6 @@ export {
     confirmar,
     olvidePassword,
     comprobarToken,
-    nuevoPassword
+    nuevoPassword,
+    perfil
 }
