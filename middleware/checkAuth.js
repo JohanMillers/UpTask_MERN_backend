@@ -16,8 +16,7 @@ const checkAuth = async (req, res, next) => {
 
             req.usuario = await Usuario.findById(decoded.id).select("-password -confimado -token -createdAt -updatedAt -__v");
 
-            return next();
-            
+          return next();
         } catch (error) {
             return res.status(404).json({ msg: "Hubo un error" });
             
@@ -25,10 +24,9 @@ const checkAuth = async (req, res, next) => {
     }
     if (!token) {
         const error = new Error('Token vo valido');
-        res.status(401).json({ msg: error.message });
+        return res.status(401).json({ msg: error.message });
     }
     
-
     next();
  
 }
