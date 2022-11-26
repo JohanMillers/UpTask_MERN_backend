@@ -6,6 +6,7 @@ import {
     editarProyecto,
     eliminarProyecto,
     agregarColaborador,
+    buscarColaborador,
     eliminarColaborador
 } from '../controllers/proyectoController.js';
 import checkAuth from "../middleware/checkAuth.js";
@@ -23,10 +24,10 @@ router
     .put(checkAuth, editarProyecto)
     .delete(checkAuth, eliminarProyecto);//Delete para eliminar un recurso completo
 
-
-router.post("/agregar-colaborador/:id", checkAuth, agregarColaborador);
+router.post("/colaboradores", checkAuth, buscarColaborador);
+router.post("/colaboradores/:id", checkAuth, agregarColaborador);
 //Para elimina una parte del recurso
-router.post("/agregar-colaborador/:id", checkAuth, eliminarColaborador);
+router.delete("/colaboradores/:id", checkAuth, eliminarColaborador);
 //Para elimina una parte del recurso
 
 
