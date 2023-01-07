@@ -2,11 +2,13 @@ import Proyecto from '../models/Proyecto.js';
 import Usuario from '../models/Usuario.js';
 
 const obtenerProyectos = async (req, res) => {
-    const proyectos = await Proyecto.find()
-        .where("creador")
-        .equals(req.usuario)
-        .select('-tareas');
+    const proyectos = await Proyecto.find({
+        '$or': [
+            { colaboradores : { $in: req.usuario } },
+            {creador: {$in: req.usuario}}
+        ],
 
+    }).select('-tareas');
     res.json(proyectos);
 
 }
@@ -29,7 +31,9 @@ const nuevoProyecto = async (req, res) => {
 const obtenerProyecto = async (req, res) => {
     const { id } = req.params;
 
-    const proyecto = await Proyecto.findById(id).populate('tareas');
+    const proyecto = await Proyecto.findById(id)
+        .populate("tareas")
+        .populate("colaboradores","nombre email");
 
     if (!proyecto) {
         const error = new Error("No Encontrado");
@@ -37,14 +41,11 @@ const obtenerProyecto = async (req, res) => {
     }
 
     //Validando que el usuario sea propietario o colaborado del proyecto
-    if (proyecto.creador.toString() !== req.usuario._id.toString()) {
+    if (proyecto.creador.toString() !== req.usuario._id.toString() && !proyecto.colaboradores
+        .some(colaborador => colaborador._id.toString() === req.usuario._id.toString())) {
         const error = new Error("Acccion no valida");
         return res.status(401).json({ msg: error.message });
     }
-     //Validando que el usuario sea propietario o colaborado del proyecto
-
-    
-
     res.json(proyecto);
 };
 
@@ -172,8 +173,24 @@ const agregarColaborador = async (req, res) => {
     
 };
 const eliminarColaborador = async (req, res) => {
+    const proyecto = await Proyecto.findById(req.params.id)
+
+    if (!proyecto) {
+        const error = new Error('Proyecto No Encontrado');
+        return res.status(404).json({ msg: error.message })
+    }
+
+    if (proyecto.creador.toString() !== req.usuario._id.toString()) {
+        const error = new Error('Tu No Create Este Proyecto');
+        return res.status(404).json({ msg: error.message })
+        
+    }
+
+    proyecto.colaboradores.pull(req.body.id);
+    await proyecto.save()
+    res.json({msg: 'Colaborador Eliminado Corretamente'})
     
-}
+};
 
 
 

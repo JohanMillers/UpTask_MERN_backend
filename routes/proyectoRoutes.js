@@ -27,7 +27,7 @@ router
 router.post("/colaboradores", checkAuth, buscarColaborador);
 router.post("/colaboradores/:id", checkAuth, agregarColaborador);
 //Para elimina una parte del recurso
-router.delete("/colaboradores/:id", checkAuth, eliminarColaborador);
+router.post("/eliminar-colaborador/:id", checkAuth, eliminarColaborador);
 //Para elimina una parte del recurso
 
 
